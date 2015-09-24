@@ -4,7 +4,7 @@ sys.path.append(".")
 
 import tibrv
 tibrv.environment.open()
-t = tibrv.transport("9650", "pc1226", "pc1226.cqsm.com:9765")
+t = tibrv.transport("9650", "pc1226", "pc1226.foo.com:9765")
 
 def cb(send_subject, reply_subject, msg):
 	print send_subject, msg

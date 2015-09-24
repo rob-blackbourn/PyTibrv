@@ -43,14 +43,17 @@ new_method(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static int
 init_method(PyTibrvNetTransportObject *self, PyObject *args, PyObject *kwds)
 {
-    char *service = NULL, *network = NULL, *daemon = NULL;
+    char *service = NULL, *network = NULL, *daemon = NULL, *license = NULL;
 
-    static char *kwlist[] = {"service", "network", "daemon", NULL};
+    static char *kwlist[] = {"service", "network", "daemon", "license", NULL};
 
-    if (! PyArg_ParseTupleAndKeywords(args, kwds, "sss", kwlist, &service, &network, &daemon))
+    if (! PyArg_ParseTupleAndKeywords(args, kwds, "sss|s", kwlist, &service, &network, &daemon, &license))
         return -1; 
 
-	TibrvStatus status = self->transport->create(service, network, daemon);
+	TibrvStatus status =
+		license == NULL
+			? self->transport->create(service, network, daemon)
+			: self->transport->createLicensed(service, network, daemon, license);
 
     return 0;
 }

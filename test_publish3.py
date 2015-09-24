@@ -4,7 +4,7 @@ sys.path.append(".")
 
 import tibrv
 tibrv.environment.open()
-t = tibrv.transport("8650", "pc391", "pc391.cqsm.com:7500")
+t = tibrv.transport("8650", "pc391", "pc391.foo.com:7500")
 
 subject = "DATAEXP.VOD LN"
 
