@@ -83,39 +83,42 @@ private:
 				value = PyObject_From(msg_field.getData().f64);
 				break;
 			case TIBRVMSG_I8ARRAY:
-				value = PyObject_From((tibrv_i8*) (msg_field.getData().array), msg_field.getSize());
+				value = PyObject_From((tibrv_i8*) (msg_field.getData().array), msg_field.getCount());
 				break;
 			case TIBRVMSG_U8ARRAY:
-				value = PyObject_From((tibrv_u8*) (msg_field.getData().array), msg_field.getSize());
+				value = PyObject_From((tibrv_u8*)(msg_field.getData().array), msg_field.getCount());
 				break;
 			case TIBRVMSG_I16ARRAY:
-				value = PyObject_From((tibrv_i16*) (msg_field.getData().array), msg_field.getSize());
+				value = PyObject_From((tibrv_i16*)(msg_field.getData().array), msg_field.getCount());
 				break;
 			case TIBRVMSG_U16ARRAY:
-				value = PyObject_From((tibrv_u16*) (msg_field.getData().array), msg_field.getSize());
+				value = PyObject_From((tibrv_u16*)(msg_field.getData().array), msg_field.getCount());
 				break;
 			case TIBRVMSG_I32ARRAY:
-				value = PyObject_From((tibrv_i32*) (msg_field.getData().array), msg_field.getSize());
+				value = PyObject_From((tibrv_i32*)(msg_field.getData().array), msg_field.getCount());
 				break;
 			case TIBRVMSG_U32ARRAY:
-				value = PyObject_From((tibrv_u32*) (msg_field.getData().array), msg_field.getSize());
+				value = PyObject_From((tibrv_u32*)(msg_field.getData().array), msg_field.getCount());
 				break;
 			case TIBRVMSG_I64ARRAY:
-				value = PyObject_From((tibrv_i64*) (msg_field.getData().array), msg_field.getSize());
+				value = PyObject_From((tibrv_i64*)(msg_field.getData().array), msg_field.getCount());
 				break;
 			case TIBRVMSG_U64ARRAY:
-				value = PyObject_From((tibrv_u64*) (msg_field.getData().array), msg_field.getSize());
+				value = PyObject_From((tibrv_u64*)(msg_field.getData().array), msg_field.getCount());
 				break;
 			case TIBRVMSG_F32ARRAY:
-				value = PyObject_From((tibrv_f32*) (msg_field.getData().array), msg_field.getSize());
+				value = PyObject_From((tibrv_f32*)(msg_field.getData().array), msg_field.getCount());
 				break;
 			case TIBRVMSG_F64ARRAY:
-				value = PyObject_From((tibrv_f64*) (msg_field.getData().array), msg_field.getSize());
+				value = PyObject_From((tibrv_f64*)(msg_field.getData().array), msg_field.getCount());
 				break;
 
 			}
 
-			PyDict_SetItem(py_msg, PyString_FromString(msg_field.getName()), value);
+			if (msg_field.getId() != 0)
+				PyDict_SetItem(py_msg, PyObject_From(msg_field.getId()), value);
+			else
+				PyDict_SetItem(py_msg, PyString_FromString(msg_field.getName()), value);
 		}
 
 		const char* send_subject, *reply_subject;
