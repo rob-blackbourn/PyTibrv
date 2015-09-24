@@ -28,9 +28,9 @@ public:
 private:
 	virtual void onEvent(TibrvEvent* tibevent, TibrvMsg& msg)
 	{
-		PyObject* py_msg = PyDict_New();
 		tibrv_u32 num_fields;
 		TibrvStatus status = msg.getNumFields(num_fields);
+		PyObject* py_msg = PyTuple_New(num_fields);
 		for (tibrv_u32 field_index = 0; field_index < num_fields; ++field_index)
 		{
 			TibrvMsgField msg_field;
@@ -115,10 +115,18 @@ private:
 
 			}
 
-			if (msg_field.getId() != 0)
-				PyDict_SetItem(py_msg, PyObject_From(msg_field.getId()), value);
-			else
-				PyDict_SetItem(py_msg, PyString_FromString(msg_field.getName()), value);
+			tibrv_u16 id = msg_field.getId();
+			const char* name = msg_field.getName();
+
+			PyObject* key = PyTuple_New(2);
+			PyTuple_SetItem(key, 0, PyObject_From(msg_field.getId()));
+			PyTuple_SetItem(key, 1, PyString_FromString(msg_field.getName()));
+
+			PyObject* item = PyTuple_New(2);
+			PyTuple_SetItem(item, 0, key);
+			PyTuple_SetItem(item, 1, value);
+
+			PyTuple_SetItem(py_msg, field_index, item);
 		}
 
 		const char* send_subject, *reply_subject;
