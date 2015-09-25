@@ -182,7 +182,6 @@ inline PyObject* PyTuple_From(TibrvMsgField& msg_field)
 	case TIBRVMSG_MSG:
 		value = PyTuple_From(msg_field.getData().msg);
 		break;
-
 	case TIBRVMSG_DATETIME:
 		value = PyObject_From(msg_field.getData().date);
 		break;
@@ -255,6 +254,10 @@ inline PyObject* PyTuple_From(TibrvMsgField& msg_field)
 		break;
 	case TIBRVMSG_F64ARRAY:
 		value = PyObject_From((tibrv_f64*)(msg_field.getData().array), msg_field.getCount());
+		break;
+	case TIBRVMSG_NONE:
+		value = Py_None;
+		Py_INCREF(value);
 		break;
 	}
 
