@@ -167,9 +167,8 @@ inline PyObject* PyTuple_From(TibrvMsg& msg);
 
 inline PyObject* PyTuple_From(tibrvMsg msg)
 {
-	TibrvMsg* tibrv_msg = new TibrvMsg(msg, TIBRV_TRUE);
+	std::unique_ptr<TibrvMsg> tibrv_msg(new TibrvMsg(msg, TIBRV_TRUE));
 	PyObject* py_object = PyTuple_From(*tibrv_msg);
-	delete tibrv_msg;
 	return py_object;
 }
 

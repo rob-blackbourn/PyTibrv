@@ -14,7 +14,6 @@
 #include <stdio.h>
 #include <tchar.h>
 #include <sys/timeb.h>
-#include <time.h>
 
 #ifdef _DEBUG
 #undef _DEBUG
@@ -29,3 +28,4 @@
 #include <tibrv/tibrvcpp.h>
 
 #include <map>
+#include <memory>
