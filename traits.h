@@ -20,12 +20,12 @@ inline PyObject* PyObject_From(const T& value)
 }
 
 template <typename T>
-inline PyObject* PyObject_From(const T* array, int count)
+inline PyObject* PyTuple_From(const T* array, int count)
 {
-	PyObject* list = PyList_New(count);
+	PyObject* tuple = PyTuple_New(count);
 	for (int i = 0; i < count; ++i)
-		PyList_SetItem(list, i, python_traits<T>::PyObject_FromType(array[i]));
-	return list;
+		PyTuple_SetItem(tuple, i, PyObject_From<T>(array[i]));
+	return tuple;
 }
 
 template <typename T>
@@ -40,6 +40,19 @@ inline bool PyObject_Is(PyObject* item)
 	return python_traits<T>::PyObject_CheckType(item);
 }
 
+template <typename T>
+inline bool PySequence_Is(PyObject* item)
+{
+	if (!PySequence_Check(item))
+		return false;
+
+	for (Py_ssize_t i = 0; i < PySequence_Size(item); ++i)
+		if (!python_traits<T>::PyObject_CheckType(PySequence_GetItem(item, i)))
+			return false;
+
+	return true;
+}
+
 template <typename T1, typename T2>
 inline bool PyObject_Is(PyObject* item)
 {
@@ -47,28 +60,14 @@ inline bool PyObject_Is(PyObject* item)
 }
 
 template <typename T>
-inline T* PyList_As(PyObject* list)
+inline T* PySequence_As(PyObject* sequence)
 {
-	int count = PyList_Size(list);
+	int count = PySequence_Size(sequence);
 	T* array = new T[count];
 	for (int i = 0; i < count; ++i)
 	{
-		PyObject item = PyList_GetItem(list, i);
-		array[i] = python_traits<T>::PyObject_AsType(item);
-	}
-
-	return array;
-}
-
-template <typename T>
-inline T* PyTuple_As(PyObject* list)
-{
-	int count = PyTuple_Size(list);
-	T* array = new T[count];
-	for (int i = 0; i < count; ++i)
-	{
-		PyObject item = PyTuple_GetItem(list, i);
-		array[i] = python_traits<T>::PyObject_AsType(item);
+		PyObject* item = PySequence_GetItem(sequence, i);
+		array[i] = PyObject_As<T>(item);
 	}
 
 	return array;

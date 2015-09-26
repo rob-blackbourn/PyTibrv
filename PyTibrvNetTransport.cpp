@@ -1,5 +1,6 @@
 #include "stdafx.h"
 
+#include "tibrv_exception.h"
 #include "traits.h"
 #include "types.h"
 #include "messages.h"
@@ -192,12 +193,6 @@ typemethod_send(PyTibrvNetTransportObject *self, PyObject *args, PyObject *kwds)
 
     if (! PyArg_ParseTupleAndKeywords(args, kwds, "sO|s", kwlist, &send_subject, &message_dictionary, &reply_subject))
         return NULL; 
-
-	if (!PyDict_Check(message_dictionary))
-	{
-		PyErr_SetString(PyExc_TypeError, "expected message to be dictionary");
-		return NULL;
-	}
 	
 	TibrvStatus status;
 
@@ -212,24 +207,30 @@ typemethod_send(PyTibrvNetTransportObject *self, PyObject *args, PyObject *kwds)
 	if (reply_subject != 0)
 		msg.setReplySubject(reply_subject);
 
+	if (!PyDict_Check(message_dictionary))
+	{
+		PyErr_SetString(PyExc_TypeError, "expected message to be dictionary");
+		return NULL;
+	}
+
 	PyObject *key, *value;
 	int pos = 0;
 
 	while (PyDict_Next(message_dictionary, &pos, &key, &value))
 	{
-		if (PyString_Check(key))
+		if (PyObject_Is<const char*>(key))
 		{
-			const char* mnemonic = PyString_AsString(key);
+			const char* mnemonic = PyObject_As<const char*>(key);
 
-			if (PyInt_Check(value))
+			if (PyObject_Is<tibrv_i32>(value))
 				status = msg.addI32(mnemonic, PyObject_As<tibrv_i32>(value));
-			else if (PyString_Check(value))
+			else if (PyObject_Is<const char*>(value))
 				status = msg.addString(mnemonic, PyObject_As<const char*>(value));
-			else if (PyFloat_Check(value))
+			else if (PyObject_Is<tibrv_f64>(value))
 				status = msg.addF64(mnemonic, PyObject_As<tibrv_f64>(value));
-			else if (PyBool_Check(value))
+			else if (PyObject_Is<tibrv_bool>(value))
 				status = msg.addBool(mnemonic, PyObject_As<tibrv_bool>(value));
-			else if (PyTuple_Check(value))
+			else if (PyObject_Is<tibrvMsgDateTime>(value))
 				status = msg.addDateTime(mnemonic, PyObject_As<tibrvMsgDateTime>(value));
 			else
 			{

@@ -94,34 +94,34 @@ inline PyObject* python_traits<TibrvMsgField>::PyObject_FromType(const TibrvMsgF
 		value = PyObject_From(msg_field.getData().f64);
 		break;
 	case TIBRVMSG_I8ARRAY:
-		value = PyObject_From((tibrv_i8*)(msg_field.getData().array), msg_field.getCount());
+		value = PyTuple_From(reinterpret_cast<const tibrv_i8*>(msg_field.getData().array), msg_field.getCount());
 		break;
 	case TIBRVMSG_U8ARRAY:
-		value = PyObject_From((tibrv_u8*)(msg_field.getData().array), msg_field.getCount());
+		value = PyTuple_From(reinterpret_cast<const tibrv_u8*>(msg_field.getData().array), msg_field.getCount());
 		break;
 	case TIBRVMSG_I16ARRAY:
-		value = PyObject_From((tibrv_i16*)(msg_field.getData().array), msg_field.getCount());
+		value = PyTuple_From(reinterpret_cast<const tibrv_i16*>(msg_field.getData().array), msg_field.getCount());
 		break;
 	case TIBRVMSG_U16ARRAY:
-		value = PyObject_From((tibrv_u16*)(msg_field.getData().array), msg_field.getCount());
+		value = PyTuple_From(reinterpret_cast< const tibrv_u16*>(msg_field.getData().array), msg_field.getCount());
 		break;
 	case TIBRVMSG_I32ARRAY:
-		value = PyObject_From((tibrv_i32*)(msg_field.getData().array), msg_field.getCount());
+		value = PyTuple_From(reinterpret_cast<const tibrv_i32*>(msg_field.getData().array), msg_field.getCount());
 		break;
 	case TIBRVMSG_U32ARRAY:
-		value = PyObject_From((tibrv_u32*)(msg_field.getData().array), msg_field.getCount());
+		value = PyTuple_From(reinterpret_cast<const tibrv_u32*>(msg_field.getData().array), msg_field.getCount());
 		break;
 	case TIBRVMSG_I64ARRAY:
-		value = PyObject_From((tibrv_i64*)(msg_field.getData().array), msg_field.getCount());
+		value = PyTuple_From(reinterpret_cast<const tibrv_i64*>(msg_field.getData().array), msg_field.getCount());
 		break;
 	case TIBRVMSG_U64ARRAY:
-		value = PyObject_From((tibrv_u64*)(msg_field.getData().array), msg_field.getCount());
+		value = PyTuple_From(reinterpret_cast<const tibrv_u64*>(msg_field.getData().array), msg_field.getCount());
 		break;
 	case TIBRVMSG_F32ARRAY:
-		value = PyObject_From((tibrv_f32*)(msg_field.getData().array), msg_field.getCount());
+		value = PyTuple_From(reinterpret_cast<const tibrv_f32*>(msg_field.getData().array), msg_field.getCount());
 		break;
 	case TIBRVMSG_F64ARRAY:
-		value = PyObject_From((tibrv_f64*)(msg_field.getData().array), msg_field.getCount());
+		value = PyTuple_From((tibrv_f64*)(msg_field.getData().array), msg_field.getCount());
 		break;
 	case TIBRVMSG_NONE:
 		value = Py_None;
@@ -156,4 +156,76 @@ inline PyObject* python_traits<TibrvMsg>::PyObject_FromType(const TibrvMsg& msg)
 		PyTuple_SetItem(py_msg, field_index, item);
 	}
 	return py_msg;
+}
+
+inline TibrvStatus add_field(TibrvMsg& msg, const message_key& key, PyObject* value)
+{
+	if (PyObject_Is<tibrv_i32>(value))
+		return msg.addI32(key.name, PyObject_As<tibrv_i32>(value), key.id);
+	else if (PyObject_Is<const char*>(value))
+		return msg.addString(key.name, PyObject_As<const char*>(value), key.id);
+	else if (PyObject_Is<tibrv_f64>(value))
+		return msg.addF64(key.name, PyObject_As<tibrv_f64>(value), key.id);
+	else if (PyObject_Is<tibrv_bool>(value))
+		return msg.addBool(key.name, PyObject_As<tibrv_bool>(value), key.id);
+	else if (PyObject_Is<tibrvMsgDateTime>(value))
+		return msg.addDateTime(key.name, PyObject_As<tibrvMsgDateTime>(value), key.id);
+	else if (PySequence_Is<tibrv_i32>(value))
+		return msg.addI32Array(key.name, PySequence_As<tibrv_i32>(value), PySequence_Size(value), key.id);
+	else if (PySequence_Is<tibrv_f64>(value))
+		return msg.addF64Array(key.name, PySequence_As<tibrv_f64>(value), PySequence_Size(value), key.id);
+	else if (PyObject_Is<TibrvMsg>(value))
+		return msg.addMsg(key.name, PyObject_As<TibrvMsg>(value), key.id);
+	else
+		return TibrvStatus(tibrv_status::TIBRV_INVALID_TYPE);
+}
+
+inline TibrvStatus add_field(TibrvMsg& msg, PyObject* key, PyObject* value)
+{
+	if (!PyObject_Is<message_key>(key))
+		throw std::exception("invalid key");
+
+	TibrvStatus status = add_field(msg, PyObject_As<message_key>(key), value);
+
+	if (status != TIBRV_OK)
+		throw tibrv_exception(status, "failed to create field");
+}
+
+inline bool python_traits<TibrvMsg>::PyObject_CheckType(PyObject* py_object)
+{
+	return PySequence_Check(py_object) || PyDict_Check(py_object);
+}
+
+inline TibrvMsg python_traits<TibrvMsg>::PyObject_AsType(PyObject* fields)
+{
+	TibrvMsg msg;
+	TibrvStatus status;
+
+	if (PyDict_Check(fields))
+	{
+		PyObject *key, *value;
+		int pos = 0;
+
+		while (PyDict_Next(fields, &pos, &key, &value))
+		{
+			status = add_field(msg, key, value);
+
+			if (status != TIBRV_OK)
+				throw tibrv_exception(status, "failed to create field");
+		}
+	}
+	else if (PySequence_Check(fields))
+	{
+		for (Py_ssize_t i = 0; i < PySequence_Size(fields); ++i)
+		{
+			PyObject* item = PySequence_GetItem(fields, i);
+			if (!PySequence_Check(item))
+				throw std::exception("When the fields is a sequence, each item must be a sequence of two elements.");
+
+			status = add_field(msg, PySequence_GetItem(item, 0), PySequence_GetItem(item, 1));
+
+			if (status != TIBRV_OK)
+				throw tibrv_exception(status, "failed to create field");
+		}
+	}
 }

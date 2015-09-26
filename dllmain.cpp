@@ -1,6 +1,7 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
 #include "stdafx.h"
 
+#include "tibrv_exception.h"
 #include "traits.h"
 #include "types.h"
 #include "messages.h"

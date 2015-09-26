@@ -1,5 +1,6 @@
 #include "stdafx.h"
 
+#include "tibrv_exception.h"
 #include "traits.h"
 #include "types.h"
 #include "messages.h"
