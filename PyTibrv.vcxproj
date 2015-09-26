@@ -115,6 +115,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="messages.h" />
     <ClInclude Include="PyTibrvCallback.h" />
     <ClInclude Include="PyTibrvEnvironment.h" />
     <ClInclude Include="PyTibrvException.h" />
@@ -124,6 +125,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="traits.h" />
+    <ClInclude Include="types.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="test_publish.py" />

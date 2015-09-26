@@ -1,6 +1,8 @@
 #include "stdafx.h"
 
 #include "traits.h"
+#include "types.h"
+#include "messages.h"
 #include "PyTibrvException.h"
 #include "PyTibrvListener.h"
 #include "PyTibrvNetTransport.h"
