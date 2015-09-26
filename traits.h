@@ -4,13 +4,13 @@ template<typename T>
 struct python_traits
 {
 public:
-	static PyObject* PyObject_FromType(const T);
+	static PyObject* PyObject_FromType(T const&);
 	static T PyObject_AsType(PyObject*);
 	static bool PyObject_CheckType(PyObject*);
 };
 
-inline PyObject* python_traits<const char*>::PyObject_FromType(const char* value) { return PyString_FromString(value); }
-inline const char* python_traits<const char*>::PyObject_AsType(PyObject* value) { return static_cast<const char*>(PyString_AsString(value)); }
+inline PyObject* python_traits<const char*>::PyObject_FromType(const char* const& value) { return PyString_FromString(value); }
+inline const char* python_traits<const char*>::PyObject_AsType(PyObject* value) { return PyString_AsString(value); }
 inline bool python_traits<const char*>::PyObject_CheckType(PyObject* value) { return PyString_Check(value); }
 
 template <typename T>

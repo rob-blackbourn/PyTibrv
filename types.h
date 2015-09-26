@@ -1,46 +1,46 @@
 #pragma once
 
-inline PyObject* python_traits<tibrv_f64>::PyObject_FromType(const tibrv_f64 value) { return PyFloat_FromDouble(value); }
+inline PyObject* python_traits<tibrv_f64>::PyObject_FromType(const tibrv_f64& value) { return PyFloat_FromDouble(value); }
 inline tibrv_f64 python_traits<tibrv_f64>::PyObject_AsType(PyObject* value) { return PyFloat_AsDouble(value); }
 inline bool python_traits<tibrv_f64>::PyObject_CheckType(PyObject* value) { return PyFloat_Check(value); }
 
-inline PyObject* python_traits<tibrv_f32>::PyObject_FromType(const tibrv_f32 value) { return PyFloat_FromDouble(static_cast<double>(value)); }
+inline PyObject* python_traits<tibrv_f32>::PyObject_FromType(const tibrv_f32& value) { return PyFloat_FromDouble(static_cast<double>(value)); }
 inline tibrv_f32 python_traits<tibrv_f32>::PyObject_AsType(PyObject* value) { return static_cast<tibrv_f32>(PyFloat_AsDouble(value)); }
 inline bool python_traits<tibrv_f32>::PyObject_CheckType(PyObject* value) { return PyFloat_Check(value); }
 
-inline PyObject* python_traits<tibrv_i8>::PyObject_FromType(const tibrv_i8 value) { return PyInt_FromLong(static_cast<long>(value)); }
+inline PyObject* python_traits<tibrv_i8>::PyObject_FromType(const tibrv_i8& value) { return PyInt_FromLong(static_cast<long>(value)); }
 inline tibrv_i8 python_traits<tibrv_i8>::PyObject_AsType(PyObject* value) { return static_cast<tibrv_i8>(PyInt_AsLong(value)); }
 inline bool python_traits<tibrv_i8>::PyObject_CheckType(PyObject* value) { return PyInt_Check(value); }
 
-inline PyObject* python_traits<tibrv_u8>::PyObject_FromType(const tibrv_u8 value) { return PyInt_FromLong(static_cast<long>(value)); }
+inline PyObject* python_traits<tibrv_u8>::PyObject_FromType(const tibrv_u8& value) { return PyInt_FromLong(static_cast<long>(value)); }
 inline tibrv_u8 python_traits<tibrv_u8>::PyObject_AsType(PyObject* value) { return static_cast<tibrv_u8>(PyInt_AsLong(value)); }
 inline bool python_traits<tibrv_u8>::PyObject_CheckType(PyObject* value) { return PyInt_Check(value); }
 
-inline PyObject* python_traits<tibrv_i16>::PyObject_FromType(const tibrv_i16 value) { return PyInt_FromLong(static_cast<long>(value)); }
+inline PyObject* python_traits<tibrv_i16>::PyObject_FromType(const tibrv_i16& value) { return PyInt_FromLong(static_cast<long>(value)); }
 inline tibrv_i16 python_traits<tibrv_i16>::PyObject_AsType(PyObject* value) { return static_cast<tibrv_i16>(PyInt_AsLong(value)); }
 inline bool python_traits<tibrv_i16>::PyObject_CheckType(PyObject* value) { return PyInt_Check(value); }
 
-inline PyObject* python_traits<tibrv_u16>::PyObject_FromType(const tibrv_u16 value) { return PyInt_FromLong(static_cast<long>(value)); }
+inline PyObject* python_traits<tibrv_u16>::PyObject_FromType(const tibrv_u16& value) { return PyInt_FromLong(static_cast<long>(value)); }
 inline tibrv_u16 python_traits<tibrv_u16>::PyObject_AsType(PyObject* value) { return static_cast<tibrv_u16>(PyInt_AsLong(value)); }
 inline bool python_traits<tibrv_u16>::PyObject_CheckType(PyObject* value) { return PyInt_Check(value); }
 
-inline PyObject* python_traits<tibrv_i32>::PyObject_FromType(const tibrv_i32 value) { return PyInt_FromLong(static_cast<long>(value)); }
+inline PyObject* python_traits<tibrv_i32>::PyObject_FromType(const tibrv_i32& value) { return PyInt_FromLong(static_cast<long>(value)); }
 inline tibrv_i32 python_traits<tibrv_i32>::PyObject_AsType(PyObject* value) { return static_cast<tibrv_i32>(PyInt_AsLong(value)); }
 inline bool python_traits<tibrv_i32>::PyObject_CheckType(PyObject* value) { return PyInt_Check(value); }
 
-inline PyObject* python_traits<tibrv_u32>::PyObject_FromType(const tibrv_u32 value) { return PyInt_FromLong(static_cast<long>(value)); }
+inline PyObject* python_traits<tibrv_u32>::PyObject_FromType(const tibrv_u32& value) { return PyInt_FromLong(static_cast<long>(value)); }
 inline tibrv_u32 python_traits<tibrv_u32>::PyObject_AsType(PyObject* value) { return static_cast<tibrv_u32>(PyInt_AsUnsignedLongMask(value)); }
 inline bool python_traits<tibrv_u32>::PyObject_CheckType(PyObject* value) { return PyInt_Check(value); }
 
-inline PyObject* python_traits<tibrv_i64>::PyObject_FromType(const tibrv_i64 value) { return PyLong_FromLong(static_cast<long>(value)); }
+inline PyObject* python_traits<tibrv_i64>::PyObject_FromType(const tibrv_i64& value) { return PyLong_FromLong(static_cast<long>(value)); }
 inline tibrv_i64 python_traits<tibrv_i64>::PyObject_AsType(PyObject* value) { return static_cast<tibrv_i64>(PyLong_AsLong(value)); }
 inline bool python_traits<tibrv_i64>::PyObject_CheckType(PyObject* value) { return PyLong_Check(value); }
 
-inline PyObject* python_traits<tibrv_u64>::PyObject_FromType(const tibrv_u64 value) { return PyLong_FromUnsignedLong(static_cast<long>(value)); }
+inline PyObject* python_traits<tibrv_u64>::PyObject_FromType(const tibrv_u64& value) { return PyLong_FromUnsignedLong(static_cast<long>(value)); }
 inline tibrv_u64 python_traits<tibrv_u64>::PyObject_AsType(PyObject* value) { return static_cast<tibrv_u64>(PyLong_AsUnsignedLong(value)); }
 inline bool python_traits<tibrv_u64>::PyObject_CheckType(PyObject* value) { return PyLong_Check(value); }
 
-inline PyObject* python_traits<tibrv_bool>::PyObject_FromType(const tibrv_bool value)
+inline PyObject* python_traits<tibrv_bool>::PyObject_FromType(const tibrv_bool& value)
 {
 	PyObject* py_value = (value == TIBRV_TRUE ? Py_True : Py_False);
 	Py_INCREF(py_value);
@@ -49,7 +49,7 @@ inline PyObject* python_traits<tibrv_bool>::PyObject_FromType(const tibrv_bool v
 inline tibrv_bool python_traits<tibrv_bool>::PyObject_AsType(PyObject* value) { return PyObject_IsTrue(value) ? TIBRV_TRUE : TIBRV_FALSE; }
 inline bool python_traits<tibrv_bool>::PyObject_CheckType(PyObject* value) { return PyBool_Check(value); }
 
-inline PyObject* python_traits<tibrvMsgDateTime>::PyObject_FromType(const tibrvMsgDateTime value)
+inline PyObject* python_traits<tibrvMsgDateTime>::PyObject_FromType(const tibrvMsgDateTime& value)
 {
 	time_t t = value.sec;
 
