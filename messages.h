@@ -34,23 +34,21 @@ inline bool python_traits<message_key>::PyObject_CheckType(PyObject* value)
 	return PyObject_Is<const char*>(value) || PyObject_Is<tibrv_u16>(value) || PyObject_Is<tibrv_u16, const char*>(value);
 }
 
-inline PyObject* PyTuple_From(TibrvMsg& msg);
-
-inline PyObject* PyTuple_From(tibrvMsg msg)
+inline PyObject* python_traits<tibrvMsg>::PyObject_FromType(const tibrvMsg& msg)
 {
 	std::unique_ptr<TibrvMsg> tibrv_msg(new TibrvMsg(msg, TIBRV_TRUE));
-	PyObject* py_object = PyTuple_From(*tibrv_msg);
+	PyObject* py_object = PyObject_From(*tibrv_msg);
 	return py_object;
 }
 
-inline PyObject* PyTuple_From(TibrvMsgField& msg_field)
+inline PyObject* python_traits<TibrvMsgField>::PyObject_FromType(const TibrvMsgField& msg_field)
 {
 	tibrv_u8 type = msg_field.getType();
 	PyObject* value;
 	switch (type)
 	{
 	case TIBRVMSG_MSG:
-		value = PyTuple_From(msg_field.getData().msg);
+		value = PyObject_From(msg_field.getData().msg);
 		break;
 	case TIBRVMSG_DATETIME:
 		value = PyObject_From(msg_field.getData().date);
@@ -145,7 +143,7 @@ inline PyObject* PyTuple_From(TibrvMsgField& msg_field)
 	return item;
 }
 
-inline PyObject* PyTuple_From(TibrvMsg& msg)
+inline PyObject* python_traits<TibrvMsg>::PyObject_FromType(const TibrvMsg& msg)
 {
 	tibrv_u32 num_fields;
 	TibrvStatus status = msg.getNumFields(num_fields);
@@ -153,8 +151,8 @@ inline PyObject* PyTuple_From(TibrvMsg& msg)
 	for (tibrv_u32 field_index = 0; field_index < num_fields; ++field_index)
 	{
 		TibrvMsgField msg_field;
-		status = msg.getFieldByIndex(msg_field, field_index);
-		PyObject* item = PyTuple_From(msg_field);
+		status = const_cast<TibrvMsg&>(msg).getFieldByIndex(msg_field, field_index);
+		PyObject* item = PyObject_From(msg_field);
 		PyTuple_SetItem(py_msg, field_index, item);
 	}
 	return py_msg;

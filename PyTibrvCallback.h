@@ -30,7 +30,7 @@ private:
 	{
 		TibrvStatus status;
 
-		PyObject* py_msg = PyTuple_From(msg);
+		PyObject* py_msg = PyObject_From(msg);
 
 		const char* send_subject, *reply_subject;
 		status = msg.getSendSubject(send_subject);
