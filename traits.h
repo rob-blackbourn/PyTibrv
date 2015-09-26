@@ -1,7 +1,7 @@
 #pragma once
 
 template<typename T>
-struct tibrv_traits
+struct python_traits
 {
 public:
 	static PyObject* PyObject_FromType(const T);
@@ -9,14 +9,14 @@ public:
 	static bool PyObject_CheckType(PyObject*);
 };
 
-inline PyObject* tibrv_traits<const char*>::PyObject_FromType(const char* value) { return PyString_FromString(value); }
-inline const char* tibrv_traits<const char*>::PyObject_AsType(PyObject* value) { return static_cast<const char*>(PyString_AsString(value)); }
-inline bool tibrv_traits<const char*>::PyObject_CheckType(PyObject* value) { return PyString_Check(value); }
+inline PyObject* python_traits<const char*>::PyObject_FromType(const char* value) { return PyString_FromString(value); }
+inline const char* python_traits<const char*>::PyObject_AsType(PyObject* value) { return static_cast<const char*>(PyString_AsString(value)); }
+inline bool python_traits<const char*>::PyObject_CheckType(PyObject* value) { return PyString_Check(value); }
 
 template <typename T>
 inline PyObject* PyObject_From(const T& value)
 {
-	return tibrv_traits<T>::PyObject_FromType(value);
+	return python_traits<T>::PyObject_FromType(value);
 }
 
 template <typename T>
@@ -24,20 +24,20 @@ inline PyObject* PyObject_From(const T* array, int count)
 {
 	PyObject* list = PyList_New(count);
 	for (int i = 0; i < count; ++i)
-		PyList_SetItem(list, i, tibrv_traits<T>::PyObject_FromType(array[i]));
+		PyList_SetItem(list, i, python_traits<T>::PyObject_FromType(array[i]));
 	return list;
 }
 
 template <typename T>
 inline T PyObject_As(PyObject* item)
 {
-	return tibrv_traits<T>::PyObject_AsType(item);
+	return python_traits<T>::PyObject_AsType(item);
 }
 
 template <typename T>
 inline bool PyObject_Is(PyObject* item)
 {
-	return tibrv_traits<T>::PyObject_CheckType(item);
+	return python_traits<T>::PyObject_CheckType(item);
 }
 
 template <typename T1, typename T2>
@@ -54,7 +54,7 @@ inline T* PyList_As(PyObject* list)
 	for (int i = 0; i < count; ++i)
 	{
 		PyObject item = PyList_GetItem(list, i);
-		array[i] = tibrv_traits<T>::PyObject_AsType(item);
+		array[i] = python_traits<T>::PyObject_AsType(item);
 	}
 
 	return array;
@@ -68,7 +68,7 @@ inline T* PyTuple_As(PyObject* list)
 	for (int i = 0; i < count; ++i)
 	{
 		PyObject item = PyTuple_GetItem(list, i);
-		array[i] = tibrv_traits<T>::PyObject_AsType(item);
+		array[i] = python_traits<T>::PyObject_AsType(item);
 	}
 
 	return array;

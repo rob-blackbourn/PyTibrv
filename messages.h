@@ -9,27 +9,27 @@ struct message_key
 	const tibrv_u16 id;
 };
 
-inline PyObject* tibrv_traits<message_key>::PyObject_FromType(message_key value)
+inline PyObject* python_traits<message_key>::PyObject_FromType(message_key value)
 {
 	PyObject* key = PyTuple_New(2);
-	PyTuple_SetItem(key, 0, tibrv_traits<tibrv_u16>::PyObject_FromType(value.id));
-	PyTuple_SetItem(key, 1, tibrv_traits<const char*>::PyObject_FromType(value.name));
+	PyTuple_SetItem(key, 0, python_traits<tibrv_u16>::PyObject_FromType(value.id));
+	PyTuple_SetItem(key, 1, python_traits<const char*>::PyObject_FromType(value.name));
 	return key;
 }
 
-inline message_key tibrv_traits<message_key>::PyObject_AsType(PyObject* value)
+inline message_key python_traits<message_key>::PyObject_AsType(PyObject* value)
 {
 	if (PyObject_Is<const char*>(value))
 		return message_key(0, PyObject_As<const char*>(value));
 	else if (PyObject_Is<tibrv_u16>(value))
 		return message_key(PyObject_As<tibrv_u16>(value), NULL);
 	else if (PyObject_Is<tibrv_u16,const char*>(value))
-		return message_key(tibrv_traits<tibrv_u16>::PyObject_AsType(PySequence_GetItem(value, 0)), tibrv_traits<const char*>::PyObject_AsType(PySequence_GetItem(value, 1)));
+		return message_key(python_traits<tibrv_u16>::PyObject_AsType(PySequence_GetItem(value, 0)), python_traits<const char*>::PyObject_AsType(PySequence_GetItem(value, 1)));
 	else
 		throw std::exception("invalid key");
 }
 
-inline bool tibrv_traits<message_key>::PyObject_CheckType(PyObject* value)
+inline bool python_traits<message_key>::PyObject_CheckType(PyObject* value)
 {
 	return PyObject_Is<const char*>(value) || PyObject_Is<tibrv_u16>(value) || PyObject_Is<tibrv_u16, const char*>(value);
 }
