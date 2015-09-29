@@ -32,19 +32,17 @@ static PyMethodDef module_methods[] = {
     {NULL}  /* Sentinel */
 };
 
-extern "C" {
-	__declspec(dllexport) void inittibrv(void)
-	{
-		PyObject *module = Py_InitModule("tibrv", module_methods);
+PyMODINIT_FUNC inittibrv(void)
+{
+	PyObject *module = Py_InitModule("tibrv", module_methods);
 
-		initPyTibrvException(module);
-		initPyTibrvQueue(module);
-		initPyTibrvEnvironment(module);
-		initPyTibrvNetTransport(module);
-		initPyTibrvListener(module);
+	initPyTibrvException(module);
+	initPyTibrvQueue(module);
+	initPyTibrvEnvironment(module);
+	initPyTibrvNetTransport(module);
+	initPyTibrvListener(module);
 
-		PyObject* environment = PyTibrvEnvironment_New();
-		Py_INCREF(environment);
-		PyModule_AddObject(module, "environment", environment);
-	}
+	PyObject* environment = PyTibrvEnvironment_New();
+	Py_INCREF(environment);
+	PyModule_AddObject(module, "environment", environment);
 }
